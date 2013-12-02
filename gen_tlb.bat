@@ -1,0 +1,1 @@
+midl dsound_interfaces.idl /nologo /char signed /env win32  /tlb "py_deviare_test.tlb"

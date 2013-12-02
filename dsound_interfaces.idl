@@ -1,0 +1,123 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+
+[
+	version(1.0),
+	uuid(0f0f0f0f-113A-4832-9104-000000000001),
+	helpstring("TT IDirectSound")
+]
+library TT
+{
+	importlib("stdole2.tlb");
+
+	interface IDirectSound;
+	interface IDirectSoundBuffer;
+    interface IDirectSoundNotify;
+	typedef IDirectSound* LPDIRECTSOUND;
+	typedef void* LPVOID;
+	typedef IDirectSoundBuffer* LPDIRECTSOUNDBUFFER;
+
+	typedef struct
+	{ 
+		WORD  wFormatTag;
+		WORD  nChannels;
+		DWORD nSamplesPerSec;
+		DWORD nAvgBytesPerSec;
+		WORD  nBlockAlign;
+		WORD  wBitsPerSample;
+		WORD  cbSize;
+	} WAVEFORMATEX, *LPWAVEFORMATEX; 
+
+	typedef struct _DSBUFFERDESC
+	{
+		DWORD           dwSize;
+		DWORD           dwFlags;
+		DWORD           dwBufferBytes;
+		DWORD           dwReserved;
+		LPWAVEFORMATEX  lpwfxFormat;
+	} DSBUFFERDESC, *LPDSBUFFERDESC;
+
+    typedef struct _DSBPOSITIONNOTIFY
+    {
+        DWORD dwOffset;
+        HANDLE hEventNotify;
+    } DSBPOSITIONNOTIFY, *LPDSBPOSITIONNOTIFY;
+    typedef const LPDSBPOSITIONNOTIFY LPCDSBPOSITIONNOTIFY;
+    
+
+	[
+		version(1.0),
+		uuid(0f0f0f0f-113A-4832-9104-000000000002),
+		helpstring("IDirectSound")
+	]
+	interface IDirectSound : IUnknown
+	{
+		// IUnknown methods
+		HRESULT QueryInterface (REFIID, LPVOID *) ;
+		ULONG AddRef		   ( );
+		ULONG Release		   ( );
+
+		// IDirectSound methods
+		HRESULT CreateSoundBuffer    (LPDSBUFFERDESC pcDSBufferDesc, LPDIRECTSOUNDBUFFER *ppDSBuffer, LPUNKNOWN pUnkOuter) ;
+		HRESULT GetCaps              (LPVOID /*LPDSCAPS*/ pDSCaps) ;
+		HRESULT DuplicateSoundBuffer (LPDIRECTSOUNDBUFFER pDSBufferOriginal, LPDIRECTSOUNDBUFFER *ppDSBufferDuplicate) ;
+		HRESULT SetCooperativeLevel  (HWND hwnd, DWORD dwLevel) ;
+		HRESULT Compact              ( );
+		HRESULT GetSpeakerConfig     (LPDWORD pdwSpeakerConfig) ;
+		HRESULT SetSpeakerConfig     (DWORD dwSpeakerConfig) ;
+		HRESULT Initialize           (LPCGUID pcGuidDevice) ;
+	};
+
+	[
+		version(1.0),
+		uuid(0f0f0f0f-113A-4832-9104-000000000003),
+		helpstring("IDirectSoundBuffer")
+	]
+	interface IDirectSoundBuffer: IUnknown
+	{
+		// IUnknown methods
+		HRESULT QueryInterface (REFIID, LPVOID *) ;
+		ULONG AddRef		   ( );
+		ULONG Release		   ( );
+
+		// IDirectSoundBuffer methods
+		HRESULT GetCaps              ( LPVOID/*LPDSBCAPS*/ pDSBufferCaps) ; //3
+		HRESULT GetCurrentPosition   ( LPDWORD pdwCurrentPlayCursor, LPDWORD pdwCurrentWriteCursor) ; //4
+		HRESULT GetFormat            ( LPWAVEFORMATEX pwfxFormat, DWORD dwSizeAllocated, LPDWORD pdwSizeWritten) ; //5
+		HRESULT GetVolume            ( LONG* plVolume) ; //6
+		HRESULT GetPan               ( LONG* plPan) ; //7
+		HRESULT GetFrequency         ( LPDWORD pdwFrequency) ; //8
+		HRESULT GetStatus            ( LPDWORD pdwStatus) ; //9
+		HRESULT Initialize           ( LPDIRECTSOUND pDirectSound, LPDSBUFFERDESC pcDSBufferDesc) ; //10
+		HRESULT Lock                 ( DWORD dwOffset, DWORD dwBytes, LPVOID *ppvAudioPtr1, LPDWORD pdwAudioBytes1,
+											   LPVOID *ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags) ; //11
+		HRESULT Play                 ( DWORD dwReserved1, DWORD dwPriority, DWORD dwFlags) ; //12
+		HRESULT SetCurrentPosition   ( DWORD dwNewPosition) ; //13
+		HRESULT SetFormat            ( LPWAVEFORMATEX pcfxFormat) ; //14
+		HRESULT SetVolume            ( LONG lVolume) ; //15
+		HRESULT SetPan               ( LONG lPan) ; //16
+		HRESULT SetFrequency         ( DWORD dwFrequency) ; //17
+		HRESULT Stop                 () ; //18
+		HRESULT Unlock               ( LPVOID pvAudioPtr1, DWORD dwAudioBytes1, LPVOID pvAudioPtr2, DWORD dwAudioBytes2) ; //19
+		HRESULT Restore              () ; //20
+	};
+
+	[
+		version(1.0),
+		uuid(0f0f0f0f-113A-4832-9104-000000000004),
+		helpstring("IDirectSoundNotify")
+	]
+    interface IDirectSoundNotify : IUnknown
+    {
+		// IUnknown methods
+		HRESULT QueryInterface (REFIID, LPVOID *) ;
+		ULONG AddRef		   ( );
+		ULONG Release		   ( );
+
+		// IDirectSoundNotify methods
+        HRESULT SetNotificationPositions(DWORD cPositionNotifies, 
+                                         LPCDSBPOSITIONNOTIFY lpcPositionNotifies);
+    };
+
+};
